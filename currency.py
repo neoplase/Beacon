@@ -29,10 +29,10 @@ class currency:
 			return False
 
 	def Print(self):
-		print "Ccy : " , self.Ccy
-		print "CcyLong : " , self.CcyLong
-		print "TxFee : " , self.TxFee
-		print "CoinType : ", self.CoinType
-		print "MinConfirmation : " , self.MinConfirmation
-		print "IsActive : " , self.IsActive
-		print "BaseAddress : " , self.BaseAddress
+		print("Ccy : " , self.Ccy)
+		print("CcyLong : " , self.CcyLong)
+		print("TxFee : " , self.TxFee)
+		print("CoinType : ", self.CoinType)
+		print("MinConfirmation : " , self.MinConfirmation)
+		print("IsActive : " , self.IsActive)
+		print("BaseAddress : " , self.BaseAddress)

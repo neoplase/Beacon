@@ -4,26 +4,25 @@ from peer import peer
 
 from time import time
 import math
-import matplotlib.pyplot as plt
 
 def main():
     
     
-    print "Launching algorithm ..."
+    print("Launching algorithm ...")
 
     port = portfolio("a19827699f5e4d8a8e7b32729df8c690", "62bda7d2f09f461ba5e45b6644bb35f5")
-    print "Computing Portfolio ..."
+    print("Computing Portfolio ...")
 
     port.Refresh()
     port.ComputeValue()
-    print "Retrieving Active Markets on ", port.safeheavencurrency
+    print("Retrieving Active Markets on ", port.safeheavencurrency)
 
     mkt = market()
     mkt.GetActiveMarkets(port.safeheavencurrency, 10000)
 
-    print "Initial Value of Portfolio: ", round(port.ValueInUSD, 2), " $ "
-    print "Available Cash : ", round(port.Cash, 2), " $"
-    print "Cash Ratio Limit : ", round(port.cashUpperBound, 2)
+    print("Initial Value of Portfolio: ", round(port.ValueInUSD, 2), " $ ")
+    print("Available Cash : ", round(port.Cash, 2), " $")
+    print("Cash Ratio Limit : ", round(port.cashUpperBound, 2))
 
     InitialCash = port.Cash
     InitialValue = port.ValueInUSD
@@ -38,15 +37,15 @@ def main():
             port.ComputeValue()
 
         except:
-            print "Error on refresh"
+            print("Error on refresh")
 
-        print "------------------------------------------------------------------------------------"
+        print("------------------------------------------------------------------------------------")
 
         AvailableCash = port.Cash - (InitialCash * (1 - port.cashUpperBound))
 
-        print "Value of Portfolio: ", round(port.ValueInUSD, 2), " $ "
-        print "Available Cash : ", round(AvailableCash, 2), " $"
-        print "PNL : ", round(port.ValueInUSD - InitialValue, 2), " $ "
+        print("Value of Portfolio: ", round(port.ValueInUSD, 2), " $ ")
+        print("Available Cash : ", round(AvailableCash, 2), " $")
+        print("PNL : ", round(port.ValueInUSD - InitialValue, 2), " $ ")
 
         # Checking Buy and Sell Orders
 
@@ -61,7 +60,7 @@ def main():
                 TargetPeer.GetHistoricalPrices()
                 
             except:
-                print "Error on Histo"
+                print("Error on Histo")
         
         
             for i in range(0, len(TargetPeer.HistoricalData),1):
@@ -109,7 +108,7 @@ def main():
             ma_20 = 2 * ma_20 / (float(len(last20)) * (float(len(last20)) + 1))
 
             
-            print "Ratio for : ", TargetPeer.MarketName, " = ", round(ma_5 / ma_20 * 100 - 100, 2), " % "
+            print("Ratio for : ", TargetPeer.MarketName, " = ", round(ma_5 / ma_20 * 100 - 100, 2), " % ")
             if ma_5 > 1.000 * ma_20:
                 ToBuy.append(TargetPeer)
             elif ma_5 < 1.000 * ma_20:
@@ -117,7 +116,6 @@ def main():
         
         
         try:
-    
             for PeerToB in ToBuy:
                 PeerToB.RefreshRealTime()
                 buynumber = ((port.Cash - (InitialCash * (1 - port.cashUpperBound))) / PeerToB.Mid()) / len(ToBuy)
@@ -125,16 +123,17 @@ def main():
     
                 if buynumber > PeerToB.MinTradeSize :
                     if buynumber * buyingPrice > 0.01:
-                        print "Buying ", PeerToB.MarketCurrency.Ccy, " -> ", round(buynumber, 2), " at ", round(buyingPrice,
-                                                                                                                4), " Last = ", round(PeerToB.Last,4), " ) "
+                        print("Buying ", PeerToB.MarketCurrency.Ccy, " -> ", round(buynumber, 2), " at ", round(buyingPrice,
+                                                                                                                4), " Last = ", round(PeerToB.Last,4), " ) ")
         
                         if not port.PlaceBuyOrder(PeerToB.MarketName, buynumber, buyingPrice):
-                            print "Error on placing buy order ... Time : ", time()
+                            print("Error on placing buy order ... Time : ", time())
 
                 else:
-                    print "Buying not done : ", PeerToS.MarketCurrency.Ccy , " Min Trade size not met -> " , round(PeerToS.MinTradeSize,4)
+                    print("Buying not done : ", PeerToS.MarketCurrency.Ccy , " Min Trade size not met -> " , round(PeerToS.MinTradeSize,4))
+
         except:
-            print "Error on buying part"
+            print("Error on buying part")
 
         try:
     
@@ -148,23 +147,21 @@ def main():
                         shares = item['Available']
     
                         if shares != 0:
-                            print PeerToS.MarketCurrency.Ccy, "shares ", shares
+                            print(PeerToS.MarketCurrency.Ccy, "shares ", shares)
     
                         if shares > PeerToS.MinTradeSize :
-                            print "Selling ", PeerToS.MarketCurrency.Ccy, " -> ", round(shares, 2), " at ", round(sellingPrice,
-                                                                                                                  4), " ( Last = ", round(PeerToS.Last,4), " )"
+                            print("Selling ", PeerToS.MarketCurrency.Ccy, " -> ", round(shares, 2), " at ", round(sellingPrice,4), " ( Last = ", round(PeerToS.Last,4), " )" )
                             if not port.PlaceSellOrder(PeerToS.MarketName, shares, sellingPrice):
-                                print "Error on placing sell order ... Time : ", time()
+                                print("Error on placing sell order ... Time : ", time())
                         else:
-                            print "Selling not done : ", PeerToS.MarketCurrency.Ccy , " Min Trade size not met -> " , round(PeerToS.MinTradeSize,4)
+                            print("Selling not done : ", PeerToS.MarketCurrency.Ccy , " Min Trade size not met -> " , round(PeerToS.MinTradeSize,4))
         except:
-            print "Error on selling part"
+            print("Error on selling part")
 
         try:
             port.CancelOutDatedOrder(30)
         except:
-            print "Error on cancelling orders"
-        
-        i = i + 1
+            print("Error on cancelling orders")
+
 
 main()

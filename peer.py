@@ -26,21 +26,21 @@ class peer:
 		self.HistoricalData = dict()
 
 	def Print(self):
-		print "MarketCurrency : "
+		print("MarketCurrency : ")
 		self.MarketCurrency.Print()
-		print "BaseCurrency : "
+		print("BaseCurrency : ")
 		self.BaseCurrency.Print()
-		print "MinTradeSize : " , self.MinTradeSize
-		print "MarketName : " , self.MarketName
-		print "IsActive : " , self.IsActive
-		print "Created : " , self.Created
+		print("MinTradeSize : " , self.MinTradeSize)
+		print("MarketName : " , self.MarketName)
+		print("IsActive : " , self.IsActive)
+		print("Created : " , self.Created)
 
 	def PrintValues(self):
-		print "Bid : ", self.Bid , " Last : " , self.Last, " Ask : " , self.Ask	
-		print "High : ", self.High
-		print "Low : ", self.Low
-		print "Volume : ", self.Volume
-		print "Return : " , round(self.DailyReturn() * 100,2) , " %"
+		print("Bid : ", self.Bid , " Last : " , self.Last, " Ask : " , self.Ask	)
+		print("High : ", self.High)
+		print("Low : ", self.Low)
+		print("Volume : ", self.Volume)
+		print("Return : " , round(self.DailyReturn() * 100,2) , " %")
 
 		return False
 

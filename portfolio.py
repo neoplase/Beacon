@@ -55,7 +55,7 @@ class portfolio:
         Data = BittRexCo.buy_limit(market, quantity,rate)
 
         if not Data['success']:
-            print Data['message']
+            print(Data['message'])
 
         return Data['success']
 
@@ -64,7 +64,7 @@ class portfolio:
         Data = BittRexCo.sell_limit(market, quantity,rate)
 
         if not Data['success']:
-            print Data['message']
+            print(Data['message'])
 
         return Data['success']
 
@@ -78,9 +78,9 @@ class portfolio:
                 timestamp = int(time.mktime(dt.timetuple()))
 
                 if time.time() - timestamp -3600 > seconds:
-                    print "Cancelling Order : " + item['OrderUuid']
+                    print("Cancelling Order : " + item['OrderUuid'])
                     BittRexCo.cancel(item['OrderUuid'])
         else:
-            print Data['message']
+            print(Data['message'])
                 
 
