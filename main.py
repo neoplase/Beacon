@@ -109,10 +109,10 @@ def main():
 
             
             print("Ratio for : ", TargetPeer.MarketName, " = ", round(ma_5 / ma_20 * 100 - 100, 2), " % ")
-            #if ma_5 > 1.000 * ma_20:
-                #ToBuy.append(TargetPeer)
-            #elif ma_5 < 1.000 * ma_20:
-            ToSell.append(TargetPeer)
+            if ma_5 > 1.000 * ma_20:
+                ToBuy.append(TargetPeer)
+            elif ma_5 < 1.000 * ma_20:
+                ToSell.append(TargetPeer)
         
         
         try:
