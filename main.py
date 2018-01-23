@@ -121,8 +121,10 @@ def main():
             for PeerToB in ToBuy:
                 PeerToB.RefreshRealTime()
                 buynumber = ((port.Cash - (InitialCash * (1 - port.cashUpperBound))) / PeerToB.Mid()) / len(ToBuy)
-                buyingPrice = float(PeerToB.Mid())
-    
+                buyingPrice = float(PeerToB.Bid())
+
+                PeerToB.PrintValues()
+
                 if buynumber > PeerToB.MinTradeSize :
                     if buynumber * buyingPrice > 0.01:
                         print "Buying ", PeerToB.MarketCurrency.Ccy, " -> ", round(buynumber, 2), " at ", round(buyingPrice,
@@ -141,7 +143,7 @@ def main():
             for PeerToS in ToSell:
                 PeerToS.RefreshRealTime()
                 shares = 0
-                sellingPrice = float(PeerToS.Mid())
+                sellingPrice = float(PeerToS.Ask())
     
                 for item in port.Account:
                     if item['Currency'] == PeerToS.MarketCurrency.Ccy:
