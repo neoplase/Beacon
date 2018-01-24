@@ -18,7 +18,7 @@ def main():
     print("Retrieving Active Markets on ", port.safeheavencurrency)
 
     mkt = market()
-    mkt.GetActiveMarkets(port.safeheavencurrency, 10000)
+    mkt.GetActiveMarkets(port.safeheavencurrency, 1000000)
 
     print("Initial Value of Portfolio: ", round(port.ValueInUSD, 2), " $ ")
     print("Available Cash : ", round(port.Cash, 2), " $")
@@ -52,8 +52,6 @@ def main():
         ToBuy = []
         ToSell = []
 
-        Data = []
-
         for TargetPeer in mkt.Peers:
 
             try:
@@ -61,18 +59,15 @@ def main():
                 
             except:
                 print("Error on Histo")
-        
-        
-            for i in range(0, len(TargetPeer.HistoricalData),1):
-                if (len(TargetPeer.HistoricalData)-1 - i) % 30 == 0 :
-                    Data.append(TargetPeer.HistoricalData[i])
-            
-            
-            
-            last20 = Data[-20:]
-            last5 = Data[-5:]
-            last60 = Data[-60:]
-     
+
+            last20 = TargetPeer.HistoricalData[-20*30:]
+            last5 = TargetPeer.HistoricalData[-5*30:]
+            last60 = TargetPeer.HistoricalData[-60:]
+            TargetPeer.RefreshRealTime()
+
+            #for item in last5:
+            #    print(item)
+
             ma_5 = 0
             ma_20 = 0
             mean_60 = 0
@@ -91,18 +86,22 @@ def main():
             std = std / n
             std = math.sqrt(std)
     
-            n = float(len(last5))
+            n = 0
     
             for item in last5:
                 ma_5 += n * item['C']
-                n = n - 1
-    
-            n = float(len(last20))
+                n = n +1
+
+            ma_5 += n*TargetPeer.Mid()
+
+            n = 0
     
             for item in last20:
                 ma_20 += n * item['C']
-                n = n - 1
-    
+                n = n + 1
+
+            ma_20 += n * TargetPeer.Mid()
+
             ma_5 = 2 * ma_5 / (float(len(last5)) * (float(len(last5)) + 1))
             
             ma_20 = 2 * ma_20 / (float(len(last20)) * (float(len(last20)) + 1))
@@ -119,9 +118,7 @@ def main():
             for PeerToB in ToBuy:
                 PeerToB.RefreshRealTime()
                 buynumber = ((port.Cash - (InitialCash * (1 - port.cashUpperBound))) / PeerToB.Mid()) / len(ToBuy)
-<<<<<<< HEAD
                 buyingPrice = float(PeerToB.Mid())
-=======
 
                 PeerToB.PrintValues()
 
@@ -145,10 +142,9 @@ def main():
     
             for PeerToS in ToSell:
                 PeerToS.RefreshRealTime()
-                shares = 0
+
                 sellingPrice = float(PeerToS.Mid())
-                sellingPrice = float(PeerToS.Ask())
-    
+
                 for item in port.Account:
                     if item['Currency'] == PeerToS.MarketCurrency.Ccy:
                         shares = item['Available']

@@ -74,7 +74,7 @@ class peer:
 		# V - Volume
 
 		BittRexCo = Bittrex(None,None)
-		Data = BittRexCo.get_historical_data(self.MarketName,"oneMin")
+		Data = BittRexCo.get_historical_data(self.MarketName,"fiveMin")
 
 		if Data['success']:
 			self.HistoricalData = Data['result']
