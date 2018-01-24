@@ -116,11 +116,12 @@ def main():
         
         try:
             for PeerToB in ToBuy:
-                PeerToB.RefreshRealTime()
-                buynumber = ((port.Cash - (InitialCash * (1 - port.cashUpperBound))) / PeerToB.Mid()) / len(ToBuy)
-                buyingPrice = float(PeerToB.Mid())
 
-                PeerToB.PrintValues()
+                PeerToB.RefreshRealTime()
+
+                buynumber = ((port.Cash - (InitialCash * (1 - port.cashUpperBound))) / PeerToB.Mid()) / len(ToBuy)
+
+                buyingPrice = float(PeerToB.Mid())
 
                 if buynumber > PeerToB.MinTradeSize :
 
