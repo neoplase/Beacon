@@ -136,11 +136,11 @@ def main():
                 else:
                     print("Buying not done : ", PeerToS.MarketCurrency.Ccy , " Min Trade size not met -> " , round(PeerToS.MinTradeSize,4))
 
-        except:
+        except Exception ,e:
             print("Error on buying part")
+            print(e)
 
         try:
-    
             for PeerToS in ToSell:
                 PeerToS.RefreshRealTime()
 
