@@ -64,7 +64,7 @@ def main():
         
         
             for i in range(0, len(TargetPeer.HistoricalData),1):
-                if ((len(TargetPeer.HistoricalData)-1 - i) % 30 == 0):
+                if (len(TargetPeer.HistoricalData)-1 - i) % 30 == 0 :
                     Data.append(TargetPeer.HistoricalData[i])
             
             
@@ -120,12 +120,16 @@ def main():
                 PeerToB.RefreshRealTime()
                 buynumber = ((port.Cash - (InitialCash * (1 - port.cashUpperBound))) / PeerToB.Mid()) / len(ToBuy)
                 buyingPrice = float(PeerToB.Mid())
-    
+
+                PeerToB.PrintValues()
+
                 if buynumber > PeerToB.MinTradeSize :
+
                     if buynumber * buyingPrice > 0.01:
+
                         print("Buying ", PeerToB.MarketCurrency.Ccy, " -> ", round(buynumber, 2), " at ", round(buyingPrice,
                                                                                                                 4), " Last = ", round(PeerToB.Last,4), " ) ")
-        
+
                         if not port.PlaceBuyOrder(PeerToB.MarketName, buynumber, buyingPrice):
                             print("Error on placing buy order ... Time : ", time())
 
