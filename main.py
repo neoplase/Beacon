@@ -121,6 +121,7 @@ def main():
                 buynumber = ((port.Cash - (InitialCash * (1 - port.cashUpperBound))) / PeerToB.Mid()) / len(ToBuy)
 <<<<<<< HEAD
                 buyingPrice = float(PeerToB.Mid())
+=======
 
                 PeerToB.PrintValues()
 
