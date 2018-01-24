@@ -134,11 +134,10 @@ def main():
                             print("Error on placing buy order ... Time : ", time())
 
                 else:
-                    print("Buying not done : ", PeerToS.MarketCurrency.Ccy , " Min Trade size not met -> " , round(PeerToS.MinTradeSize,4))
+                    print("Buying not done : ", PeerToB.MarketCurrency.Ccy , " Min Trade size not met -> " , round(PeerToB.MinTradeSize,4))
 
-        except Exception ,e:
+        except :
             print("Error on buying part")
-            print(e)
 
         try:
             for PeerToS in ToSell:
