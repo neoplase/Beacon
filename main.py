@@ -35,9 +35,9 @@ def main():
     while True:
         i = i + 1
         try:
-
+            port.Refresh()
             if divmod(i,10) == 0 :
-                port.Refresh()
+
                 port.ComputeValue()
 
         except:
@@ -134,8 +134,6 @@ def main():
             for PeerToB in ToBuy:
 
                 PeerToB.RefreshRealTime()
-
-
 
                 buyingPrice = float(PeerToB.Bid)
 
