@@ -33,10 +33,12 @@ def main():
     
     
     while True:
-        
+        i = i + 1
         try:
-            port.Refresh()
-            port.ComputeValue()
+
+            if divmod(i,10) == 0 :
+                port.Refresh()
+                port.ComputeValue()
 
         except:
             print("Error on refresh")
