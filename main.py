@@ -18,7 +18,7 @@ def main():
     print("Retrieving Active Markets on ", port.safeheavencurrency)
 
     mkt = market()
-    mkt.GetActiveMarkets(port.safeheavencurrency, 1000000)
+    mkt.GetActiveMarkets(port.safeheavencurrency, 5)
 
     print("Initial Value of Portfolio: ", round(port.ValueInUSD, 2), " $ ")
     print("Available Cash : ", round(port.Cash, 2), " $")
@@ -116,7 +116,7 @@ def main():
             if ma_5 > 1.003 * ma_20 and ma_5 < 1.01*ma_20:
                 if TargetPeer.LockedUntil < time.time():
                     ToBuy.append(TargetPeer)
-            elif ma_5 < 1.0015 * ma_20:
+            elif ma_5 < 1.0025 * ma_20:
                 if TargetPeer.LockedUntil < time.time():
                     ToSell.append(TargetPeer)
             elif ma_5 >  1.01 * ma_20 and TargetPeer.LockedUntil < time.time() :
@@ -145,7 +145,7 @@ def main():
                                                                                                                 4), " Last = ", round(PeerToB.Last,4), " ) ")
 
                         if not port.PlaceBuyOrder(PeerToB.MarketName, buynumber, buyingPrice):
-                            print("Error on placing buy order ... Time : ", time())
+                            print("Error on placing buy order ... Time : ", time.time())
 
                 else:
                     print("Buying not done : ", PeerToB.MarketCurrency.Ccy , " Min Trade size not met -> " , round(PeerToB.MinTradeSize,4))
@@ -157,7 +157,7 @@ def main():
             for PeerToS in ToSell:
                 PeerToS.RefreshRealTime()
 
-                sellingPrice = float(PeerToS.Mid())
+                sellingPrice = float( (PeerToS.Ask + PeerToS.Mid())/2.0)
 
                 for item in port.Account:
                     if item['Currency'] == PeerToS.MarketCurrency.Ccy:
@@ -169,14 +169,14 @@ def main():
                         if shares > 0:
                             print("Selling ", PeerToS.MarketCurrency.Ccy, " -> ", round(shares, 2), " at ", round(sellingPrice,4), " ( Last = ", round(PeerToS.Last,4), " )" )
                             if not port.PlaceSellOrder(PeerToS.MarketName, shares, sellingPrice):
-                                print("Error on placing sell order ... Time : ", time())
+                                print("Error on placing sell order ... Time : ", time.time())
                         elif shares != 0:
                             print("Selling not done : ", PeerToS.MarketCurrency.Ccy , " Min Trade size not met -> " , round(PeerToS.MinTradeSize,4))
         except:
             print("Error on selling part")
 
         try:
-            port.CancelOutDatedOrder(2*60)
+            port.CancelOutDatedOrder(60)
         except:
             print("Error on cancelling orders")
 

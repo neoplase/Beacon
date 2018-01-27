@@ -5,7 +5,7 @@ class market:
     def __init__(self):
         self.Peers = []
 
-    def GetActiveMarkets(self, filterBaseCcy = None, filterVolume = None):
+    def GetActiveMarkets(self, filterBaseCcy = None, Top = 0):
         BittRexCo = Bittrex(None, None)
         Data = BittRexCo.get_markets()
 
@@ -16,20 +16,16 @@ class market:
                     p = peer()
                     p.GetInformations(item['MarketName'])
 
-                    if filterVolume == None :
-                        self.Peers.append(p)    
-                    else:
-                        if p.Last*p.Volume >= filterVolume :
-                            self.Peers.append(p)
+                    self.Peers.append(p)
+
 
                 elif item['BaseCurrency'] == filterBaseCcy:
                     
                     p = peer()
                     p.GetInformations(item['MarketName'])
 
-                    if filterVolume == None :
-                        self.Peers.append(p)
-                    else:
-                        if p.Last*p.Volume >= filterVolume:
-                            self.Peers.append(p)
+                    self.Peers.append(p)
+
+            if Top > 0 :
+                self.Peers = self.Peers[:Top]
 

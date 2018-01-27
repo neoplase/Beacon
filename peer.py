@@ -24,7 +24,7 @@ class peer:
 		self.OpenSellOrders = 0
 		self.PrevDay = 0
 		self.HistoricalData = dict()
-                self.LockedUntil =time.time()
+		self.LockedUntil =time.time()
 
 	def Print(self):
 		print("MarketCurrency : ")
