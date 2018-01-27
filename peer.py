@@ -1,6 +1,6 @@
 from currency import currency
 from bittrex.bittrex import Bittrex
-from time import *
+import time
 
 class peer:
 
@@ -24,6 +24,7 @@ class peer:
 		self.OpenSellOrders = 0
 		self.PrevDay = 0
 		self.HistoricalData = dict()
+                self.LockedUntil =time.time()
 
 	def Print(self):
 		print("MarketCurrency : ")

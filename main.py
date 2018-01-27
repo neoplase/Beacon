@@ -2,7 +2,7 @@ from portfolio import portfolio
 from market import market
 from peer import peer
 
-from time import time
+import time
 import math
 
 def main():
@@ -26,6 +26,8 @@ def main():
 
     InitialCash = port.Cash
     InitialValue = port.ValueInUSD
+    
+    sessionPNL = 0
 
     i = 0
     
@@ -45,23 +47,26 @@ def main():
 
         print("Value of Portfolio: ", round(port.ValueInUSD, 2), " $ ")
         print("Available Cash : ", round(AvailableCash, 2), " $")
-        print("PNL : ", round(port.ValueInUSD - InitialValue, 2), " $ ")
+        print("PNL : ", round(port.ValueInUSD - InitialValue, 2), " $ ")           
+
 
         # Checking Buy and Sell Orders
 
         ToBuy = []
         ToSell = []
 
+        
         for TargetPeer in mkt.Peers:
-
+            
+            
             try:
                 TargetPeer.GetHistoricalPrices()
                 
             except:
                 print("Error on Histo")
 
-            last20 = TargetPeer.HistoricalData[-20*30:]
-            last5 = TargetPeer.HistoricalData[-5*30:]
+            last20 = TargetPeer.HistoricalData[-20:]
+            last5 = TargetPeer.HistoricalData[-5:]
             last60 = TargetPeer.HistoricalData[-60:]
             TargetPeer.RefreshRealTime()
 
@@ -108,20 +113,29 @@ def main():
 
             
             print("Ratio for : ", TargetPeer.MarketName, " = ", round(ma_5 / ma_20 * 100 - 100, 2), " % ")
-            if ma_5 > 1.000 * ma_20:
-                ToBuy.append(TargetPeer)
-            elif ma_5 < 1.000 * ma_20:
+            if ma_5 > 1.003 * ma_20 and ma_5 < 1.01*ma_20:
+                if TargetPeer.LockedUntil < time.time():
+                    ToBuy.append(TargetPeer)
+            elif ma_5 < 1.0015 * ma_20:
+                if TargetPeer.LockedUntil < time.time():
+                    ToSell.append(TargetPeer)
+            elif ma_5 >  1.01 * ma_20 and TargetPeer.LockedUntil < time.time() :
+                #LOCK
+                print('Lock', TargetPeer.MarketCurrency.Ccy)
+                TargetPeer.LockedUntil = time.time() + 1800
                 ToSell.append(TargetPeer)
-        
-        
+                sessionPNL = port.ValueInUSD -InitialValue                
+            elif TargetPeer.LockedUntil > time.time():
+                ToSell.append(TargetPeer)
+
         try:
             for PeerToB in ToBuy:
 
                 PeerToB.RefreshRealTime()
 
-                buynumber = ((port.Cash - (InitialCash * (1 - port.cashUpperBound))) / PeerToB.Mid()) / len(ToBuy)
+                buynumber = ((port.Cash - (InitialCash * (1 - port.cashUpperBound))) / PeerToB.Bid) / len(ToBuy)
 
-                buyingPrice = float(PeerToB.Mid())
+                buyingPrice = float(PeerToB.Bid)
 
                 if buynumber > PeerToB.MinTradeSize :
 
@@ -152,17 +166,17 @@ def main():
                         if shares != 0:
                             print(PeerToS.MarketCurrency.Ccy, "shares ", shares)
     
-                        if shares > PeerToS.MinTradeSize :
+                        if shares > 0:
                             print("Selling ", PeerToS.MarketCurrency.Ccy, " -> ", round(shares, 2), " at ", round(sellingPrice,4), " ( Last = ", round(PeerToS.Last,4), " )" )
                             if not port.PlaceSellOrder(PeerToS.MarketName, shares, sellingPrice):
                                 print("Error on placing sell order ... Time : ", time())
-                        else:
+                        elif shares != 0:
                             print("Selling not done : ", PeerToS.MarketCurrency.Ccy , " Min Trade size not met -> " , round(PeerToS.MinTradeSize,4))
         except:
             print("Error on selling part")
 
         try:
-            port.CancelOutDatedOrder(30)
+            port.CancelOutDatedOrder(2*60)
         except:
             print("Error on cancelling orders")
 

@@ -15,7 +15,7 @@ class portfolio:
         self.Cash = 0.0
 
         self.safeheavencurrency = "USDT"
-        self.cashUpperBound = 1.0
+        self.cashUpperBound = 0.98
 
     def Refresh(self):
 
@@ -76,8 +76,7 @@ class portfolio:
             for item in Data['result']:
                 dt = dateutil.parser.parse(item['Opened'])
                 timestamp = int(time.mktime(dt.timetuple()))
-
-                if time.time() - timestamp -3600 > seconds:
+                if time.time() - timestamp > seconds:
                     print("Cancelling Order : " + item['OrderUuid'])
                     BittRexCo.cancel(item['OrderUuid'])
         else:
