@@ -15,7 +15,7 @@ class portfolio:
         self.Cash = 0.0
 
         self.safeheavencurrency = "USDT"
-        self.cashUpperBound = 0.99
+        self.cashUpperBound = 0.98
 
     def Refresh(self):
 
