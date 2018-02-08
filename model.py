@@ -27,7 +27,8 @@ class Model:
             OI = []
 
             Data = {}
-            for i in range(0, len(Orderbooks)-2):
+
+            for i in range(0, len(Orderbooks)-1):
                 OI.append(self.OI(Orderbooks[i+1], Orderbooks[i]))
 
             for i in range(0 ,len(Orderbooks) - self.TimeWindow):
@@ -89,11 +90,20 @@ class Model:
 
         OI = []
 
-        if len(OrderBook) == self.jLag:
-            for i in range(0, len(Orderbooks)-2):
+        if len(Orderbooks) == self.jLag +1:
+            for i in range(0, len(Orderbooks)-1):
                 OI.append(self.OI(Orderbooks[i+1], Orderbooks[i]))
 
-            return self.Model.predict(OI)
+            pd = DataFrame(OI).transpose()
+            keys = []
+
+            for i in range(0, self.jLag):
+                keys.append('OI' + str(self.jLag - i))
+
+            pd.columns = keys
+
+
+            return self.Model.predict(pd)[0]
         else:
             return False
 
@@ -132,9 +142,14 @@ def LaunchStrategy():
 
     _Orderbooks = []
 
+    frequency = 5
 
-    for i in range(0,300):
-        time.sleep(1)
+    Over = 500
+
+    for i in range(0,Over):
+
+        time.sleep(frequency)
+
         print("Retrieving Orderbook : " + str(i))
 
         tmp = OrderBook(Peer.MarketName)
@@ -144,11 +159,17 @@ def LaunchStrategy():
 
     Mod = Model()
 
-    Mod.Calibrate(_Orderbooks, 12,6)
+    jLag = 10
+
+    Mod.Calibrate(_Orderbooks, 20 ,jLag)
 
     _Orderbooks = []
 
     InitialValue = port.ValueInUSD
+
+    timedelta = 0
+
+    timetosleep = 0
 
     for i in range(0,120):
 
@@ -156,21 +177,28 @@ def LaunchStrategy():
         print("Available Cash : ", round(port.Cash, 2), " $")
         print("PNL : ", round(port.ValueInUSD - InitialValue, 2), " $ ")
 
-        time.sleep(1)
+        if frequency > timedelta:
+            timetosleep = frequency - timedelta
+        else:
+            timetosleep = 0
+
+        time.sleep(timetosleep)
+
+        t = time.time()
 
         print("Retrieving Orderbook : " + str(i))
 
-        tmp = OrderBook("USDT-BTC")
+        tmp = OrderBook("USDT-NEO")
 
         if tmp.Refresh():
 
-            if len(_Orderbooks) >= 6:
+            if len(_Orderbooks) >= jLag +1 :
 
                 _Orderbooks.pop()
 
             _Orderbooks.append(tmp)
 
-            if len(_Orderbooks) >= 6:
+            if len(_Orderbooks) >= jLag + 1:
 
                 Value = Mod.PriceChangePrediction(_Orderbooks[::-1])
 
@@ -184,7 +212,7 @@ def LaunchStrategy():
                     if port.Cash > 1.00 :
                         Peer.RefreshRealTime()
 
-                        buyingPrice = Peer.Mid()
+                        buyingPrice = (Peer.Ask + Peer.Mid())/2
                         buyingNumber = (99.0/100.0) * port.Cash / buyingPrice
 
                         print("Buying ", Peer.MarketCurrency.Ccy, " -> ", round(buyingNumber, 2), " at ", round(buyingPrice,
@@ -204,7 +232,7 @@ def LaunchStrategy():
 
                             if shares > 0:
                                 Peer.RefreshRealTime()
-                                sellingPrice = Peer.Mid()
+                                sellingPrice = Peer.Bid
 
                                 print("Selling ", Peer.MarketCurrency.Ccy, " -> ", round(shares, 2), " at ",
                                       round(sellingPrice, 4), " ( Last = ", round(Peer.Last, 4), " )")
@@ -216,5 +244,5 @@ def LaunchStrategy():
                                 print("Selling not done : ", Peer.MarketCurrency.Ccy, " Min Trade size not met -> ",
                                       round(Peer.MinTradeSize, 4))
 
+        timedelta = (time.time() - t)
 
-LaunchStrategy()

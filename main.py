@@ -1,13 +1,15 @@
 from portfolio import portfolio
 from market import market
-from peer import peer
+from model import *
 
 import time
 import math
 
 def main():
-    
-    
+    LaunchStrategy()
+
+def main2():
+
     print("Launching algorithm ...")
 
     port = portfolio("a19827699f5e4d8a8e7b32729df8c690", "62bda7d2f09f461ba5e45b6644bb35f5")
