@@ -171,7 +171,7 @@ def LaunchStrategy():
 
     timetosleep = 0
 
-    for i in range(0,120):
+    while True :
 
         print("Value of Portfolio: ", round(port.ValueInUSD, 2), " $ ")
         print("Available Cash : ", round(port.Cash, 2), " $")
@@ -200,12 +200,15 @@ def LaunchStrategy():
 
                 Value = Mod.PriceChangePrediction(_Orderbooks[::-1])
 
+
                 if type(Value) == bool:
                     print("ERROR: No refreshed data")
 
                 elif Value > 0 :
+
                     port.Refresh()
 
+                    print('Prediction of Change from model : ' + str(round(Value*100,4)) + ' % ' )
                     #Pas de transaction en dessous de 1 $ ...
                     if port.Cash > 1.00 :
 
@@ -234,6 +237,8 @@ def LaunchStrategy():
                 elif Value < 0 :
 
                     Refreshed = False
+
+                    print('Prediction of Change from model : ' + str(round(Value*100,4)) + ' % ' )
 
                     while not Refreshed:
                         try:
