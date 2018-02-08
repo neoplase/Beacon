@@ -137,12 +137,12 @@ def LaunchStrategy():
 
     Peer = peer()
 
-    while not Peer.GetInformations("USDT-BTC"):
+    while not Peer.GetInformations("USDT-NEO"):
         print('Retrying ...')
 
     _Orderbooks = []
 
-    frequency = 0
+    frequency = 5
 
     Over = 500
 
@@ -186,9 +186,7 @@ def LaunchStrategy():
 
         t = time.time()
 
-        print("Retrieving Orderbook : " + str(i))
-
-        tmp = OrderBook("USDT-NEO")
+        tmp = OrderBook(Peer.MarketName)
 
         if tmp.Refresh():
 

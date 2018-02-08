@@ -51,7 +51,6 @@ class portfolio:
         return self.ValueInUSD
 
     def PlaceBuyOrder(self, market, quantity, rate):
-        return True
         BittRexCo = Bittrex(self.apikey,self.apisecret)
         Data = BittRexCo.buy_limit(market, quantity,rate)
 
@@ -61,7 +60,6 @@ class portfolio:
         return Data['success']
 
     def PlaceSellOrder(self,market, quantity, rate):
-        return True
         BittRexCo = Bittrex(self.apikey,self.apisecret)
         Data = BittRexCo.sell_limit(market, quantity,rate)
 
