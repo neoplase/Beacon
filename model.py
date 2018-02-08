@@ -142,7 +142,7 @@ def LaunchStrategy():
 
     _Orderbooks = []
 
-    frequency = 5
+    frequency = 0
 
     Over = 500
 
