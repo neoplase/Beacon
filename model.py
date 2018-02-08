@@ -144,7 +144,7 @@ def LaunchStrategy():
 
     frequency = 1
 
-    Over = 3600
+    Over = 600
 
     for i in range(0,Over):
 
@@ -159,7 +159,7 @@ def LaunchStrategy():
 
     Mod = Model()
 
-    jLag = 20
+    jLag = 5
 
     Mod.Calibrate(_Orderbooks, 20 ,jLag)
 
@@ -178,6 +178,7 @@ def LaunchStrategy():
         while not Refreshed :
             try:
                 port.Refresh()
+                Refreshed = True
             except:
                 print('Retry')
 
