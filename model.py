@@ -142,9 +142,9 @@ def LaunchStrategy():
 
     _Orderbooks = []
 
-    frequency = 5
+    frequency = 1
 
-    Over = 500
+    Over = 3600
 
     for i in range(0,Over):
 
@@ -159,7 +159,7 @@ def LaunchStrategy():
 
     Mod = Model()
 
-    jLag = 10
+    jLag = 20
 
     Mod.Calibrate(_Orderbooks, 20 ,jLag)
 
@@ -172,6 +172,14 @@ def LaunchStrategy():
     timetosleep = 0
 
     while True :
+        
+        Refreshed = False
+
+        while not Refreshed :
+            try:
+                port.Refresh()
+            except:
+                print('Retry')
 
         print("Value of Portfolio: ", round(port.ValueInUSD, 2), " $ ")
         print("Available Cash : ", round(port.Cash, 2), " $")
@@ -205,8 +213,15 @@ def LaunchStrategy():
                     print("ERROR: No refreshed data")
 
                 elif Value > 0 :
+                    
+                    Refreshed = False
 
-                    port.Refresh()
+                    while not Refreshed:
+                        try:
+                            port.Refresh()
+                            Refreshed =True
+                        except:
+                            print('Retry...')
 
                     print('Prediction of Change from model : ' + str(round(Value*100,4)) + ' % ' )
                     #Pas de transaction en dessous de 1 $ ...
