@@ -145,8 +145,8 @@ def main():
                         print("Buying ", PeerToB.MarketCurrency.Ccy, " -> ", round(buynumber, 2), " at ", round(buyingPrice,
                                                                                                                 4), " Last = ", round(PeerToB.Last,4), " ) ")
 
-                        if not port.PlaceBuyOrder(PeerToB.MarketName, buynumber, buyingPrice):
-                            print("Error on placing buy order ... Time : ", time.time())
+                        #if not port.PlaceBuyOrder(PeerToB.MarketName, buynumber, buyingPrice):
+                        #    print("Error on placing buy order ... Time : ", time.time())
 
                 else:
                     print("Buying not done : ", PeerToB.MarketCurrency.Ccy , " Min Trade size not met -> " , round(PeerToB.MinTradeSize,4))
@@ -169,8 +169,8 @@ def main():
     
                         if shares > 0:
                             print("Selling ", PeerToS.MarketCurrency.Ccy, " -> ", round(shares, 2), " at ", round(sellingPrice,4), " ( Last = ", round(PeerToS.Last,4), " )" )
-                            if not port.PlaceSellOrder(PeerToS.MarketName, shares, sellingPrice):
-                                print("Error on placing sell order ... Time : ", time.time())
+                            #if not port.PlaceSellOrder(PeerToS.MarketName, shares, sellingPrice):
+                            #    print("Error on placing sell order ... Time : ", time.time())
                         elif shares != 0:
                             print("Selling not done : ", PeerToS.MarketCurrency.Ccy , " Min Trade size not met -> " , round(PeerToS.MinTradeSize,4))
         except:

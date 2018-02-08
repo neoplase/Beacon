@@ -65,11 +65,12 @@ class OrderBook:
             if item.Side == BUY :
                 if item.Rate >= self.BidPrice :
                     self.BidPrice = item.Rate
-                    self.BidVolume = item.Quantity
+                    self.BidVolume = self.BidVolume + item.Quantity
+
             elif item.Side == SELL:
                 if item.Rate <= self.AskPrice :
                     self.AskPrice = item.Rate
-                    self.AskVolume = item.Quantity
+                    self.AskVolume = self.AskVolume + item.Quantity
 
         self.MidPrice = (self.AskPrice + self.BidPrice)/2
 
