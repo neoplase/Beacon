@@ -159,7 +159,7 @@ def LaunchStrategy():
         time.sleep(1)
 
         print("Retrieving Orderbook : " + str(i))
-        
+
         tmp = OrderBook("USDT-BTC")
 
         if tmp.Refresh():
