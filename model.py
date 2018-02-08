@@ -210,17 +210,40 @@ def LaunchStrategy():
 
                     #Pas de transaction en dessous de 1 $ ...
                     if port.Cash > 1.00 :
-                        Peer.RefreshRealTime()
+
+                        Refreshed = False
+
+                        while not Refreshed:
+                            try:
+                                Peer.RefreshRealTime()
+                                Refreshed = True
+                            except :
+                                print("ERROR : Retrying to refresh real time ...")
 
                         buyingPrice = (Peer.Ask + Peer.Mid())/2
                         buyingNumber = (99.0/100.0) * port.Cash / buyingPrice
 
-                        print("Buying ", Peer.MarketCurrency.Ccy, " -> ", round(buyingNumber, 2), " at ", round(buyingPrice,
-                                                                                                                4)," Last = ", round(Peer.Last, 4), " ) ")
-                        if not port.PlaceBuyOrder(Peer.MarketName, buyingNumber, buyingPrice):
-                            print("Error on placing buy order ... Time : ", time.time())
+                        if buyingNumber > Peer.MinTradeSize:
+                            print("Buying ", Peer.MarketCurrency.Ccy, " -> ", round(buyingNumber, 2), " at ", round(buyingPrice,4)," Last = ", round(Peer.Last, 4), " ) ")
+                            try:
+                                if not port.PlaceBuyOrder(Peer.MarketName, buyingNumber, buyingPrice):
+                                    print("Error on placing buy order ... Time : ", time.time())
+                            except:
+                                print("Oops : Buy not done")
+                        else:
+                            print("Buying not done : ", Peer.MarketCurrency.Ccy, " Min Trade size not met -> ",round(Peer.MinTradeSize, 4))
+
                 elif Value < 0 :
-                    port.Refresh()
+
+                    Refreshed = False
+
+                    while not Refreshed:
+                        try:
+                            port.Refresh()
+                            Refreshed = True
+                        except:
+                            print("ERROR : Retrying to refresh Folio ...")
+
 
                     for item in port.Account:
 
@@ -231,14 +254,26 @@ def LaunchStrategy():
                                 print(Peer.MarketCurrency.Ccy, "shares in portfolio to sell", shares)
 
                             if shares > 0:
-                                Peer.RefreshRealTime()
+
+                                Refreshed = False
+
+                                while not Refreshed:
+                                    try:
+                                        Peer.RefreshRealTime()
+                                        Refreshed = True
+                                    except:
+                                        print("ERROR : Retrying to refresh real time ...")
+
                                 sellingPrice = Peer.Bid
 
                                 print("Selling ", Peer.MarketCurrency.Ccy, " -> ", round(shares, 2), " at ",
                                       round(sellingPrice, 4), " ( Last = ", round(Peer.Last, 4), " )")
 
-                                if not port.PlaceSellOrder(Peer.MarketName, shares, sellingPrice):
-                                   print("Error on placing sell order ... Time : ", time.time())
+                                try :
+                                    if not port.PlaceSellOrder(Peer.MarketName, shares, sellingPrice):
+                                        print("Error on placing sell order ... Time : ", time.time())
+                                except:
+                                    print("Oops : Selling not done")
 
                             elif shares != 0:
                                 print("Selling not done : ", Peer.MarketCurrency.Ccy, " Min Trade size not met -> ",
