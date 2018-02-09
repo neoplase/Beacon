@@ -73,6 +73,8 @@ class Model:
                         first = False
                     else:
                         formula = formula + ' + ' + item
+            
+            formula = formula + ' - 1'
 
             lm = smf.ols(formula=formula, data=pd).fit()
 
@@ -109,21 +111,21 @@ class Model:
 
     def OI(self, Orderbookt, Orderbooktminusone):
 
-        if Orderbookt.BidPrice < Orderbooktminusone.BidPrice :
-            dVtB = 0
-        elif Orderbookt.BidPrice == Orderbooktminusone.BidPrice :
-            dVtB = Orderbookt.BidVolume - Orderbooktminusone.BidVolume
-        else :
-            dVtB = Orderbookt.BidVolume
+        #if Orderbookt.BidPrice < Orderbooktminusone.BidPrice :
+        #    dVtB = 0
+        #elif Orderbookt.BidPrice == Orderbooktminusone.BidPrice :
+        #    dVtB = Orderbookt.BidVolume - Orderbooktminusone.BidVolume
+        #else :
+        dVtB = Orderbookt.BidVolume
 
-        if Orderbookt.AskPrice < Orderbooktminusone.AskPrice :
-            dVtA = Orderbookt.AskVolume
-        elif Orderbookt.AskPrice == Orderbooktminusone.AskPrice :
-            dVtA = Orderbookt.AskVolume - Orderbooktminusone.AskVolume
-        else :
-            dVtA = 0
+        #if Orderbookt.AskPrice < Orderbooktminusone.AskPrice :
+        dVtA = Orderbookt.AskVolume
+        #elif Orderbookt.AskPrice == Orderbooktminusone.AskPrice :
+        #    dVtA = Orderbookt.AskVolume - Orderbooktminusone.AskVolume
+        #else :
+        #    dVtA = 0
 
-        return dVtB - dVtA
+        return dVtB / (dVtB + dVtA)
 
 def LaunchStrategy():
 
@@ -137,14 +139,14 @@ def LaunchStrategy():
 
     Peer = peer()
 
-    while not Peer.GetInformations("USDT-NEO"):
+    while not Peer.GetInformations("USDT-BCC"):
         print('Retrying ...')
 
     _Orderbooks = []
 
     frequency = 1
 
-    Over = 600
+    Over = 120
 
     for i in range(0,Over):
 
@@ -159,9 +161,9 @@ def LaunchStrategy():
 
     Mod = Model()
 
-    jLag = 5
+    jLag = 10
 
-    Mod.Calibrate(_Orderbooks, 20 ,jLag)
+    Mod.Calibrate(_Orderbooks, 5 ,jLag)
 
     _Orderbooks = []
 
@@ -178,6 +180,7 @@ def LaunchStrategy():
         while not Refreshed :
             try:
                 port.Refresh()
+                port.ComputeValue()
                 Refreshed = True
             except:
                 print('Retry')
@@ -200,9 +203,8 @@ def LaunchStrategy():
         if tmp.Refresh():
 
             if len(_Orderbooks) >= jLag +1 :
-
-                _Orderbooks.pop()
-
+                _Orderbooks = _Orderbooks[1:]
+    
             _Orderbooks.append(tmp)
 
             if len(_Orderbooks) >= jLag + 1:
@@ -213,18 +215,21 @@ def LaunchStrategy():
                 if type(Value) == bool:
                     print("ERROR: No refreshed data")
 
-                elif Value > 0 :
+                elif Value > 0.0005:
                     
                     Refreshed = False
 
                     while not Refreshed:
                         try:
                             port.Refresh()
+
+                            port.CancelOutDatedOrder(30)
                             Refreshed =True
                         except:
                             print('Retry...')
 
                     print('Prediction of Change from model : ' + str(round(Value*100,4)) + ' % ' )
+                    
                     #Pas de transaction en dessous de 1 $ ...
                     if port.Cash > 1.00 :
 
@@ -233,12 +238,13 @@ def LaunchStrategy():
                         while not Refreshed:
                             try:
                                 Peer.RefreshRealTime()
+                                Peer.PrintValues()
                                 Refreshed = True
                             except :
                                 print("ERROR : Retrying to refresh real time ...")
 
-                        buyingPrice = (Peer.Ask + Peer.Mid())/2
-                        buyingNumber = (99.0/100.0) * port.Cash / buyingPrice
+                        buyingPrice = Peer.Bid
+                        buyingNumber = (50.0/100.0) * port.Cash / buyingPrice
 
                         if buyingNumber > Peer.MinTradeSize:
                             print("Buying ", Peer.MarketCurrency.Ccy, " -> ", round(buyingNumber, 2), " at ", round(buyingPrice,4)," Last = ", round(Peer.Last, 4), " ) ")
@@ -250,7 +256,7 @@ def LaunchStrategy():
                         else:
                             print("Buying not done : ", Peer.MarketCurrency.Ccy, " Min Trade size not met -> ",round(Peer.MinTradeSize, 4))
 
-                elif Value < 0 :
+                elif Value < -0.0003 :
 
                     Refreshed = False
 
@@ -258,6 +264,7 @@ def LaunchStrategy():
 
                     while not Refreshed:
                         try:
+                            port.CancelOutDatedOrder(30)
                             port.Refresh()
                             Refreshed = True
                         except:
@@ -279,11 +286,12 @@ def LaunchStrategy():
                                 while not Refreshed:
                                     try:
                                         Peer.RefreshRealTime()
+                                        Peer.PrintValues()
                                         Refreshed = True
                                     except:
                                         print("ERROR : Retrying to refresh real time ...")
 
-                                sellingPrice = Peer.Bid
+                                sellingPrice = Peer.Mid()
 
                                 print("Selling ", Peer.MarketCurrency.Ccy, " -> ", round(shares, 2), " at ",
                                       round(sellingPrice, 4), " ( Last = ", round(Peer.Last, 4), " )")

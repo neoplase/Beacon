@@ -24,7 +24,7 @@ class OrderBook:
         if self.Market != "" :
 
             try:
-                Data = BittRexCo.get_orderbook(self.Market,BOTH_ORDERBOOK,20)
+                Data = BittRexCo.get_orderbook(self.Market,BOTH_ORDERBOOK,10)
                 self.Date = time.time()
 
                 if Data['success']:
@@ -65,14 +65,12 @@ class OrderBook:
             if item.Side == BUY :
                 if item.Rate >= self.BidPrice :
                     self.BidPrice = item.Rate
-                
-                self.BidVolume = self.BidVolume + item.Quantity
+                    self.BidVolume = self.BidVolume + item.Quantity
 
             elif item.Side == SELL:
                 if item.Rate <= self.AskPrice :
                     self.AskPrice = item.Rate
-                
-                self.AskVolume = self.AskVolume + item.Quantity
+                    self.AskVolume = self.AskVolume + item.Quantity
 
         self.MidPrice = (self.AskPrice + self.BidPrice)/2
 
