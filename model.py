@@ -152,7 +152,7 @@ def LaunchStrategy():
 
     frequency = 1
 
-    Over = 240
+    Over = 360
 
     for i in range(0,Over):
 
@@ -264,7 +264,7 @@ def LaunchStrategy():
                         else:
                             print("Buying not done : ", Peer.MarketCurrency.Ccy, " Min Trade size not met -> ",round(Peer.MinTradeSize, 4))
 
-                elif Value < -0.0003 :
+                elif Value < 0 :
 
                     Refreshed = False
 
