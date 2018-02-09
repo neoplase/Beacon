@@ -131,7 +131,7 @@ class Model:
 def LaunchStrategy():
 
     try :
-        sys.stdout = open('output.log', 'w')
+        sys.stdout = open('output.log', 'w',0)
     except:
         print("ERROR STDOUTPUT")
 
