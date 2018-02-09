@@ -224,7 +224,7 @@ def LaunchStrategy():
                 if type(Value) == bool:
                     print("ERROR: No refreshed data")
 
-                elif Value > 0.0005:
+                elif Value > 0.0003:
                     
                     Refreshed = False
 
@@ -313,19 +313,19 @@ def LaunchStrategy():
                             elif shares != 0:
                                 print("Selling not done : ", Peer.MarketCurrency.Ccy, " Min Trade size not met -> ",
                                       round(Peer.MinTradeSize, 4))
-                    else :
+                else :
 
-                        print('Prediction of Change from model : ' + str(round(Value * 100, 4)) + ' % ')
+                    print('Prediction of Change from model : ' + str(round(Value * 100, 4)) + ' % ')
 
-                        Refreshed = False
+                    Refreshed = False
 
-                        while not Refreshed:
-                            try:
-                                port.CancelOutDatedOrder(30)
-                                port.Refresh()
-                                Refreshed = True
-                            except:
-                                print("ERROR : Retrying to refresh Folio ...")
+                    while not Refreshed:
+                        try:
+                            port.CancelOutDatedOrder(30)
+                            port.Refresh()
+                            Refreshed = True
+                        except:
+                            print("ERROR : Retrying to refresh Folio ...")
 
         timedelta = (time.time() - t)
 
