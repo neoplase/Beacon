@@ -170,6 +170,7 @@ def LaunchStrategy():
     InitialValue = port.ValueInUSD
 
     timedelta = 0
+    Value = 0
 
     timetosleep = 0
 
@@ -209,7 +210,7 @@ def LaunchStrategy():
 
             if len(_Orderbooks) >= jLag + 1:
 
-                if Value <> 0 :
+                if Value != 0 :
                     Value = (Value + Mod.PriceChangePrediction(_Orderbooks[::-1]))/2
                 else:
                     Value = Mod.PriceChangePrediction(_Orderbooks[::-1])
