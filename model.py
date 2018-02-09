@@ -264,7 +264,7 @@ def LaunchStrategy():
                         else:
                             print("Buying not done : ", Peer.MarketCurrency.Ccy, " Min Trade size not met -> ",round(Peer.MinTradeSize, 4))
 
-                elif Value < 0 :
+                elif Value < -0.00015 :
 
                     Refreshed = False
 
