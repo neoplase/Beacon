@@ -111,21 +111,21 @@ class Model:
 
     def OI(self, Orderbookt, Orderbooktminusone):
 
-        #if Orderbookt.BidPrice < Orderbooktminusone.BidPrice :
-        #    dVtB = 0
-        #elif Orderbookt.BidPrice == Orderbooktminusone.BidPrice :
-        #    dVtB = Orderbookt.BidVolume - Orderbooktminusone.BidVolume
-        #else :
-        dVtB = Orderbookt.BidVolume
+        if Orderbookt.BidPrice < Orderbooktminusone.BidPrice :
+            dVtB = 0
+        elif Orderbookt.BidPrice == Orderbooktminusone.BidPrice :
+            dVtB = Orderbookt.BidVolume - Orderbooktminusone.BidVolume
+        else :
+            dVtB = Orderbookt.BidVolume
 
-        #if Orderbookt.AskPrice < Orderbooktminusone.AskPrice :
-        dVtA = Orderbookt.AskVolume
-        #elif Orderbookt.AskPrice == Orderbooktminusone.AskPrice :
-        #    dVtA = Orderbookt.AskVolume - Orderbooktminusone.AskVolume
-        #else :
-        #    dVtA = 0
+        if Orderbookt.AskPrice < Orderbooktminusone.AskPrice :
+            dVtA = Orderbookt.AskVolume
+        elif Orderbookt.AskPrice == Orderbooktminusone.AskPrice :
+            dVtA = Orderbookt.AskVolume - Orderbooktminusone.AskVolume
+        else :
+            dVtA = 0
 
-        return dVtB / (dVtB + dVtA)
+        return dVtB - dVtA
 
 def LaunchStrategy():
 
@@ -139,14 +139,14 @@ def LaunchStrategy():
 
     Peer = peer()
 
-    while not Peer.GetInformations("USDT-BCC"):
+    while not Peer.GetInformations("USDT-BTC"):
         print('Retrying ...')
 
     _Orderbooks = []
 
     frequency = 1
 
-    Over = 120
+    Over = 240
 
     for i in range(0,Over):
 
@@ -209,8 +209,10 @@ def LaunchStrategy():
 
             if len(_Orderbooks) >= jLag + 1:
 
-                Value = Mod.PriceChangePrediction(_Orderbooks[::-1])
-
+                if Value <> 0 :
+                    Value = (Value + Mod.PriceChangePrediction(_Orderbooks[::-1]))/2
+                else:
+                    Value = Mod.PriceChangePrediction(_Orderbooks[::-1])
 
                 if type(Value) == bool:
                     print("ERROR: No refreshed data")
@@ -222,7 +224,6 @@ def LaunchStrategy():
                     while not Refreshed:
                         try:
                             port.Refresh()
-
                             port.CancelOutDatedOrder(30)
                             Refreshed =True
                         except:
@@ -305,6 +306,19 @@ def LaunchStrategy():
                             elif shares != 0:
                                 print("Selling not done : ", Peer.MarketCurrency.Ccy, " Min Trade size not met -> ",
                                       round(Peer.MinTradeSize, 4))
+                    else :
+
+                        print('Prediction of Change from model : ' + str(round(Value * 100, 4)) + ' % ')
+
+                        Refreshed = False
+
+                        while not Refreshed:
+                            try:
+                                port.CancelOutDatedOrder(30)
+                                port.Refresh()
+                                Refreshed = True
+                            except:
+                                print("ERROR : Retrying to refresh Folio ...")
 
         timedelta = (time.time() - t)
 
