@@ -161,9 +161,9 @@ def LaunchStrategy():
 
     Mod = Model()
 
-    jLag = 10
+    jLag = 5
 
-    Mod.Calibrate(_Orderbooks, 5 ,jLag)
+    Mod.Calibrate(_Orderbooks, 3 ,jLag)
 
     _Orderbooks = []
 
