@@ -6,6 +6,7 @@ from pandas import DataFrame
 from portfolio import portfolio
 from peer import peer
 
+import sys
 import time
 
 class Model:
@@ -128,6 +129,11 @@ class Model:
         return dVtB - dVtA
 
 def LaunchStrategy():
+
+    try :
+        sys.stdout = open('output.log', 'w')
+    except:
+        print("ERROR STDOUTPUT")
 
     print("Launching algorithm ...")
 
