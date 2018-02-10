@@ -24,6 +24,8 @@ def Strategy():
 
     i = 0
 
+    timetosleep = 5
+
     while True:
 
         i = i +1
@@ -42,7 +44,7 @@ def Strategy():
         Refreshed = False
 
         try :
-            port.CancelOutDatedOrder(5)
+            port.CancelOutDatedOrder(timetosleep)
         except :
             print('Error on cancelling orders')
 
@@ -75,28 +77,33 @@ def Strategy():
                 try:
                     if not port.PlaceBuyOrder(Peer.MarketName, buyingNumber, buyingPrice):
                         print("Error on placing buy order ... Time : ", time.time())
+                    else :
+                        time.sleep(timetosleep)
                 except:
                     print("Oops : Buy not done")
             else:
                 print("Buying not done : ", Peer.MarketCurrency.Ccy, " Min Trade size not met -> ",
                       round(Peer.MinTradeSize, 4))
 
+
         elif shares !=0 :
             print('Already have position, waiting for lock')
-
-        else :
-            print('Spread is : '  + str(round((Orderbook.AskPrice - Orderbook.BidPrice) / Orderbook.MidPrice  * 100, 2)) + '===>  Nothing to do')
 
             sellingPrice = Orderbook.AskPrice - Orderbook.AskPrice * 0.0001
 
             print("Selling ", Peer.MarketCurrency.Ccy, " -> ", round(shares, 2), " at ",
-            round(sellingPrice, 4), " ( Last = ", round(Peer.Last, 4), " )")
+                  round(sellingPrice, 4), " ( Last = ", round(Peer.Last, 4), " )")
 
             try:
                 if not port.PlaceSellOrder(Peer.MarketName, shares, sellingPrice):
                     print("Error on placing sell order ... Time : ", time.time())
             except:
                 print("Oops : Selling not done")
+
+        else :
+            print('Spread is : '  + str(round((Orderbook.AskPrice - Orderbook.BidPrice) / Orderbook.MidPrice  * 100, 2)) + '===>  Nothing to do')
+
+
 
 
 
