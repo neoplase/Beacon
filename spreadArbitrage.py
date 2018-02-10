@@ -93,7 +93,7 @@ def Strategy():
 
         else :
 
-            if (Orderbook.AskPrice - Orderbook.BidPrice) / Orderbook.MidPrice > 0.01 and myBidPrice == 0 :
+            if (Orderbook.AskPrice - Orderbook.BidPrice) / Orderbook.MidPrice > 0.01 and myBidPrice == 0.0 :
 
                 print('Spread is above than 1%')
 
