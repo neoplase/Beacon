@@ -58,49 +58,16 @@ def Strategy():
                 print('Retry to refresh orderbook and portfolio')
 
         shares = 0
-
+        Balance = 0
 
         for item in port.Account:
             if item['Currency'] == Peer.MarketCurrency.Ccy:
                 shares = item['Available']
-
-        if Orderbook.BidPrice != myBidPrice and shares == 0 :
-            try:
-                port.CancelOutDatedOrder(timetosleep)
-                myBidPrice = 0
-            except:
-                print('Error on cancelling orders')
-        elif shares != 0 and myAskPrice != Orderbook.AskPrice :
-            try:
-                port.CancelOutDatedOrder(timetosleep)
-                myAskPrice = 0
-            except:
-                print('Error on cancelling orders')
-
-        if (Orderbook.AskPrice - Orderbook.BidPrice) / Orderbook.MidPrice > 0.01 and shares == 0 and myBidPrice == 0:
-
-            print('Spread is above than 1%')
-
-            buyingPrice = Orderbook.BidPrice + Orderbook.BidPrice * 0.0001
-
-            myBidPrice = buyingPrice
-
-            buyingNumber = (50.0 / 100.0) * port.Cash / buyingPrice
-
-            if buyingNumber > Peer.MinTradeSize:
-                print("Buying ", Peer.MarketCurrency.Ccy, " -> ", round(buyingNumber, 2), " at ", round(buyingPrice, 4),
-                      " Last = ", round(Peer.Last, 4), " ) ")
-                try:
-                    if not port.PlaceBuyOrder(Peer.MarketName, buyingNumber, buyingPrice):
-                        print("Error on placing buy order ... Time : ", time.time())
-                except:
-                    print("Oops : Buy not done")
-            else:
-                print("Buying not done : ", Peer.MarketCurrency.Ccy, " Min Trade size not met -> ",
-                      round(Peer.MinTradeSize, 4))
+                Balance = item['Balance']
 
 
-        elif shares !=0 :
+        if shares > 0 :
+
             print('Already have position, waiting for lock')
 
             sellingPrice = Orderbook.AskPrice - Orderbook.AskPrice * 0.0001
@@ -116,8 +83,46 @@ def Strategy():
             except:
                 print("Oops : Selling not done")
 
+        elif Balance != 0 :
+            if myAskPrice != Orderbook.AskPrice :
+                try:
+                    port.CancelOutDatedOrder(timetosleep)
+                    myAskPrice = 0
+                except:
+                    print('Error on cancelling orders')
+
         else :
-            print('Spread is : '  + str(round((Orderbook.AskPrice - Orderbook.BidPrice) / Orderbook.MidPrice  * 100, 2)) + '===>  Nothing to do')
+
+            if (Orderbook.AskPrice - Orderbook.BidPrice) / Orderbook.MidPrice > 0.01 and myBidPrice == 0 :
+
+                print('Spread is above than 1%')
+
+                buyingPrice = Orderbook.BidPrice + Orderbook.BidPrice * 0.0001
+
+                myBidPrice = buyingPrice
+
+                buyingNumber = (50.0 / 100.0) * port.Cash / buyingPrice
+
+                if buyingNumber > Peer.MinTradeSize:
+                    print("Buying ", Peer.MarketCurrency.Ccy, " -> ", round(buyingNumber, 2), " at ", round(buyingPrice, 4),
+                          " Last = ", round(Peer.Last, 4), " ) ")
+                    try:
+                        if not port.PlaceBuyOrder(Peer.MarketName, buyingNumber, buyingPrice):
+                            print("Error on placing buy order ... Time : ", time.time())
+                    except:
+                        print("Oops : Buy not done")
+                else:
+                    print("Buying not done : ", Peer.MarketCurrency.Ccy, " Min Trade size not met -> ",
+                          round(Peer.MinTradeSize, 4))
+
+            elif myBidPrice !=  Orderbook.BidPrice :
+                try:
+                    port.CancelOutDatedOrder(timetosleep)
+                    myBidPrice = 0
+                except:
+                    print('Error on cancelling orders')
+            else :
+                print('Spread is : '  + str(round((Orderbook.AskPrice - Orderbook.BidPrice) / Orderbook.MidPrice  * 100, 2)) + '===>  Nothing to do')
 
 
 
