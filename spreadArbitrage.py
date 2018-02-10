@@ -1,6 +1,7 @@
 import orderbook
 import portfolio
 from peer import peer
+import time
 
 def Strategy():
 
@@ -25,7 +26,7 @@ def Strategy():
     i = 0
 
     timetosleep = 5
-
+    myBidPrice = 0
     while True:
 
         i = i +1
@@ -43,10 +44,7 @@ def Strategy():
         Orderbook = orderbook.OrderBook(Peer.MarketName)
         Refreshed = False
 
-        try :
-            port.CancelOutDatedOrder(timetosleep)
-        except :
-            print('Error on cancelling orders')
+
 
         while not Refreshed:
 
@@ -59,15 +57,25 @@ def Strategy():
 
         shares = 0
 
+
         for item in port.Account:
             if item['Currency'] == Peer.MarketCurrency.Ccy:
                 shares = item['Available']
 
-        if (Orderbook.AskPrice - Orderbook.BidPrice) / Orderbook.MidPrice > 0.01 and shares == 0 :
+        if Orderbook.BidPrice != myBidPrice :
+            try:
+                port.CancelOutDatedOrder(timetosleep)
+                myBidPrice = 0
+            except:
+                print('Error on cancelling orders')
+
+        if (Orderbook.AskPrice - Orderbook.BidPrice) / Orderbook.MidPrice > 0.01 and shares == 0 and myBidPrice == 0:
 
             print('Spread is above than 1%')
 
             buyingPrice = Orderbook.BidPrice + Orderbook.BidPrice * 0.0001
+
+            myBidPrice = buyingPrice
 
             buyingNumber = (50.0 / 100.0) * port.Cash / buyingPrice
 
@@ -77,8 +85,6 @@ def Strategy():
                 try:
                     if not port.PlaceBuyOrder(Peer.MarketName, buyingNumber, buyingPrice):
                         print("Error on placing buy order ... Time : ", time.time())
-                    else :
-                        time.sleep(timetosleep)
                 except:
                     print("Oops : Buy not done")
             else:
