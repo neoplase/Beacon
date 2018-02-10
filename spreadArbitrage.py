@@ -26,8 +26,8 @@ def Strategy():
     i = 0
 
     timetosleep = 5
-    myBidPrice = 0
-    myAskPrice = 0
+    myBidPrice = 0.0
+    myAskPrice = 0.0
 
     while True:
 
@@ -37,7 +37,7 @@ def Strategy():
 
             try :
                 port.ComputeValue()
-                file.write('PNL : ' + str(port.ValueInUSD) )
+                file.write('PNL : ' + str(port.ValueInUSD) + '\n')
 
             except:
                 print('Unable to compute Value')
@@ -93,7 +93,7 @@ def Strategy():
 
         else :
 
-            if (Orderbook.AskPrice - Orderbook.BidPrice) / Orderbook.MidPrice > 0.01 and myBidPrice == 0.0 :
+            if (Orderbook.AskPrice - Orderbook.BidPrice) / Orderbook.MidPrice > 0.0075 and myBidPrice == 0.0 :
 
                 print('Spread is above than 1%')
 
@@ -115,14 +115,14 @@ def Strategy():
                     print("Buying not done : ", Peer.MarketCurrency.Ccy, " Min Trade size not met -> ",
                           round(Peer.MinTradeSize, 4))
 
-            elif myBidPrice !=  Orderbook.BidPrice :
+            elif myBidPrice !=  Orderbook.BidPrice and (Orderbook.AskPrice - Orderbook.BidPrice) / Orderbook.MidPrice > 0.0075:
                 try:
                     port.CancelOutDatedOrder(timetosleep)
-                    myBidPrice = 0
+                    myBidPrice = 0.0
                 except:
                     print('Error on cancelling orders')
             else :
-                print('Spread is : '  + str(round((Orderbook.AskPrice - Orderbook.BidPrice) / Orderbook.MidPrice  * 100, 2)) + '===>  Nothing to do')
+                print('Spread is : '  + str(round((Orderbook.AskPrice - Orderbook.BidPrice) / Orderbook.MidPrice  * 100, 2)) + ' % ===>  Nothing to do')
 
 
 
