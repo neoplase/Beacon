@@ -20,7 +20,7 @@ def Strategy():
 
     Peer = peer()
 
-    while not Peer.GetInformations("USDT-OMG"):
+    while not Peer.GetInformations("USDT-XMR"):
         print('Retrying ...')
 
     i = 0
