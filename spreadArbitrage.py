@@ -62,7 +62,13 @@ def Strategy():
             if item['Currency'] == Peer.MarketCurrency.Ccy:
                 shares = item['Available']
 
-        if Orderbook.BidPrice != myBidPrice :
+        if Orderbook.BidPrice != myBidPrice and shares == 0 :
+            try:
+                port.CancelOutDatedOrder(timetosleep)
+                myBidPrice = 0
+            except:
+                print('Error on cancelling orders')
+        elif shares != 0 :
             try:
                 port.CancelOutDatedOrder(timetosleep)
                 myBidPrice = 0
