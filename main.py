@@ -1,12 +1,12 @@
 from portfolio import portfolio
 from market import market
-from model import *
+import spreadArbitrage
 
 import time
 import math
 
 def main():
-    LaunchStrategy()
+    spreadArbitrage.Strategy()
 
 def main2():
 
