@@ -27,6 +27,8 @@ def Strategy():
 
     timetosleep = 5
     myBidPrice = 0
+    myAskPrice = 0
+
     while True:
 
         i = i +1
@@ -68,10 +70,10 @@ def Strategy():
                 myBidPrice = 0
             except:
                 print('Error on cancelling orders')
-        elif shares != 0 :
+        elif shares != 0 and myAskPrice != Orderbook.AskPrice :
             try:
                 port.CancelOutDatedOrder(timetosleep)
-                myBidPrice = 0
+                myAskPrice = 0
             except:
                 print('Error on cancelling orders')
 
@@ -102,6 +104,8 @@ def Strategy():
             print('Already have position, waiting for lock')
 
             sellingPrice = Orderbook.AskPrice - Orderbook.AskPrice * 0.0001
+
+            myAskPrice = Orderbook.AskPrice - Orderbook.AskPrice * 0.0001
 
             print("Selling ", Peer.MarketCurrency.Ccy, " -> ", round(shares, 2), " at ",
                   round(sellingPrice, 4), " ( Last = ", round(Peer.Last, 4), " )")
