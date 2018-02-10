@@ -1,5 +1,6 @@
 import orderbook
 import portfolio
+from peer import peer
 
 def Strategy():
 
