@@ -41,8 +41,8 @@
       <file leaf-file-name="spreadArbitrage.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/spreadArbitrage.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="357">
-              <caret line="21" column="44" lean-forward="false" selection-start-line="21" selection-start-column="44" selection-end-line="21" selection-end-column="44" />
+            <state relative-caret-position="378">
+              <caret line="63" column="91" lean-forward="false" selection-start-line="63" selection-start-column="91" selection-end-line="63" selection-end-column="91" />
               <folding>
                 <element signature="e#0#16#0" expanded="true" />
               </folding>
@@ -350,7 +350,14 @@
       <option name="project" value="LOCAL" />
       <updated>1518225970129</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="Spread Arbitrage test">
+      <created>1518226712799</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1518226712799</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -708,8 +715,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/spreadArbitrage.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="357">
-          <caret line="21" column="44" lean-forward="false" selection-start-line="21" selection-start-column="44" selection-end-line="21" selection-end-column="44" />
+        <state relative-caret-position="378">
+          <caret line="63" column="91" lean-forward="false" selection-start-line="63" selection-start-column="91" selection-end-line="63" selection-end-column="91" />
           <folding>
             <element signature="e#0#16#0" expanded="true" />
           </folding>
